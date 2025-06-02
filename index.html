@@ -3,29 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hitung Persentase Pengguna</title>
+  <title>Penghitungan Persentase</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      background: #f4f4f4;
+      background: #f8f8f8;
     }
     .input-group {
-      margin-bottom: 10px;
       display: flex;
       gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
     }
-    input[type="text"], input[type="number"] {
+    .input-group input {
       padding: 5px;
+    }
+    .input-group button {
+      padding: 5px 10px;
+      background: #e74c3c;
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    .input-group button:hover {
+      background: #c0392b;
+    }
+    button {
+      margin-right: 10px;
+      padding: 6px 12px;
+      cursor: pointer;
     }
     .hasil {
       margin-top: 20px;
-      background: #fff;
-      padding: 10px;
+      padding: 15px;
+      background: #ffffff;
       border-radius: 5px;
+      box-shadow: 0 0 5px #ccc;
     }
-    button {
-      padding: 6px 12px;
+    ul {
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -34,9 +52,11 @@
   <h2>Penghitungan Persentase Pengguna</h2>
 
   <div id="inputContainer">
+    <!-- Input pertama default -->
     <div class="input-group">
       <input type="text" placeholder="Jenis Pengguna (misal: BPJS)" class="jenis">
       <input type="number" placeholder="Jumlah" class="jumlah">
+      <button onclick="hapusInput(this)">Hapus</button>
     </div>
   </div>
 
@@ -53,8 +73,14 @@
       group.innerHTML = `
         <input type="text" placeholder="Jenis Pengguna" class="jenis">
         <input type="number" placeholder="Jumlah" class="jumlah">
+        <button onclick="hapusInput(this)">Hapus</button>
       `;
       container.appendChild(group);
+    }
+
+    function hapusInput(button) {
+      const group = button.parentElement;
+      group.remove();
     }
 
     function hitungPersentase() {
@@ -75,20 +101,25 @@
         }
       }
 
-      if (total === 0) {
-        hasilDiv.innerHTML = `<p style="color: red;">Masukkan jumlah yang valid!</p>`;
+      if (data.length === 0 || total === 0) {
+        hasilDiv.innerHTML = `<p style="color: red;">Masukkan data yang valid!</p>`;
         return;
       }
 
       let output = `<h3>Hasil Persentase:</h3><ul>`;
+      let totalPersen = 0;
       data.forEach(item => {
-        const persen = ((item.jumlah / total) * 100).toFixed(2);
-        output += `<li>${item.jenis}: ${persen}% (${item.jumlah})</li>`;
+        const persen = ((item.jumlah / total) * 100);
+        totalPersen += persen;
+        output += `<li>${item.jenis}: ${persen.toFixed(2)}% (${item.jumlah})</li>`;
       });
-      output += `</ul><strong>Total Pengguna: ${total}</strong>`;
+      output += `</ul>`;
+      output += `<p><strong>Total Pengguna:</strong> ${total}</p>`;
+      output += `<p><strong>Total Persentase:</strong> ${totalPersen.toFixed(2)}%</p>`;
 
       hasilDiv.innerHTML = output;
     }
   </script>
+
 </body>
 </html>
