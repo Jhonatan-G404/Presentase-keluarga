@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Penghitungan Persentase</title>
+  <title>Penghitungan Persentase Keluarga</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -45,18 +45,22 @@
     ul {
       margin-top: 10px;
     }
-
     .created {
-      color:Blue;
+      color: blue;
+      margin-top: 30px;
     }
   </style>
 </head>
 <body>
 
-  <h2>Penghitungan Persentase Pengguna</h2>
+  <h2>Penghitungan Persentase Keluarga</h2>
+
+  <label>Total Keluarga/semua yang ada di catatanmu <br>
+  <strong>(wes sak karep mu lah) : </strong></label>
+  <input type="number" id="totalKeluarga" placeholder="Masukkan total anggota keluarga"><br><br>
 
   <div id="inputContainer">
-    <!-- Input pertama default -->
+    <!-- Input default -->
     <div class="input-group">
       <input type="text" placeholder="Jenis Pengguna (misal: BPJS)" class="jenis">
       <input type="number" placeholder="Jumlah" class="jumlah">
@@ -64,12 +68,10 @@
     </div>
   </div>
 
-  <button onclick="tambahInput()">+ Tambah Input</button>
+  <button onclick="tambahInput()">+ Tambah Jenis</button>
   <button onclick="hitungPersentase()">Hitung Persentase</button>
 
   <div class="hasil" id="hasilOutput"></div>
-
-  <br>
 
   <p class="created">created by Pacar Vero :D</p>
 
@@ -92,41 +94,56 @@
     }
 
     function hitungPersentase() {
-      const jenisInputs = document.querySelectorAll('.jenis');
-      const jumlahInputs = document.querySelectorAll('.jumlah');
-      const hasilDiv = document.getElementById('hasilOutput');
+  const totalKeluarga = parseInt(document.getElementById('totalKeluarga').value);
+  const jenisInputs = document.querySelectorAll('.jenis');
+  const jumlahInputs = document.querySelectorAll('.jumlah');
+  const hasilDiv = document.getElementById('hasilOutput');
 
-      let data = [];
-      let total = 0;
+  if (!totalKeluarga || totalKeluarga <= 0) {
+    hasilDiv.innerHTML = `<p style="color:red;">Masukkan total anggota keluarga yang valid.</p>`;
+    return;
+  }
 
-      for (let i = 0; i < jenisInputs.length; i++) {
-        const jenis = jenisInputs[i].value.trim();
-        const jumlah = parseInt(jumlahInputs[i].value) || 0;
+  let data = [];
+  let totalKategori = 0;
 
-        if (jenis && jumlah > 0) {
-          data.push({ jenis, jumlah });
-          total += jumlah;
-        }
-      }
+  for (let i = 0; i < jenisInputs.length; i++) {
+    const jenis = jenisInputs[i].value.trim();
+    const jumlah = parseInt(jumlahInputs[i].value) || 0;
 
-      if (data.length === 0 || total === 0) {
-        hasilDiv.innerHTML = `<p style="color: red;">Masukkan data yang valid!</p>`;
-        return;
-      }
+    if (jenis && jumlah > 0) {
+      data.push({ jenis, jumlah });
+      totalKategori += jumlah;
+    }
+  }
 
-      let output = `<h3>Hasil Persentase:</h3><ul>`;
-      let totalPersen = 0;
-      data.forEach(item => {
-        const persen = ((item.jumlah / total) * 100);
-        totalPersen += persen;
-        output += `<li>${item.jenis}: ${persen.toFixed(2)}% (${item.jumlah})</li>`;
-      });
-      output += `</ul>`;
-      output += `<p><strong>Total Pengguna:</strong> ${total}</p>`;
-      output += `<p><strong>Total Persentase:</strong> ${totalPersen.toFixed(2)}%</p>`;
+  if (data.length === 0) {
+    hasilDiv.innerHTML = `<p style="color:red;">Masukkan minimal satu jenis pengguna.</p>`;
+    return;
+  }
 
-      hasilDiv.innerHTML = output;
-    }
+  let output = "";
+
+  // Tampilkan peringatan jika jumlah kategori tidak sesuai
+  if (totalKategori !== totalKeluarga) {
+    output += `<p style="color:orange;">Jumlah total kategori (${totalKategori}) tidak sama dengan total anggota keluarga (${totalKeluarga}).</p>`;
+  }
+
+  output += `<h3>Hasil Persentase (berdasarkan total keluarga):</h3><ul>`;
+  let totalPersen = 0;
+
+  data.forEach(item => {
+    const persen = (item.jumlah / totalKeluarga) * 100;
+    totalPersen += persen;
+    output += `<li>${item.jenis}: ${persen.toFixed(2)}% (${item.jumlah} orang)</li>`;
+  });
+
+  output += `</ul>`;
+  output += `<p><strong>Total Anggota Keluarga:</strong> ${totalKeluarga}</p>`;
+  output += `<p><strong>Total Persentase:</strong> ${totalPersen.toFixed(2)}%</p>`;
+
+  hasilDiv.innerHTML = output;
+}
   </script>
 
 </body>
